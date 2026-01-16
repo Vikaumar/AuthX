@@ -5,20 +5,30 @@
 
 const { Pool } = require('pg');
 const logger = require('../utils/logger.util');
+const isProduction = process.env.NODE_ENV === 'production';
 
 // Create connection pool with environment configuration
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT, 10) || 5432,
-  database: process.env.DB_NAME || 'authx',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || '',
-  
-  // Pool configuration for production readiness
-  max: 20,                    // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000,   // Close idle clients after 30 seconds
-  connectionTimeoutMillis: 5000, // Fail fast if can't connect in 5 seconds
-});
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: isProduction ? { rejectUnauthorized: false } : false,
+        max: 20,
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 5000,
+      }
+    : {
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT, 10) || 5432,
+        database: process.env.DB_NAME || 'authx',
+        user: process.env.DB_USER || 'postgres',
+        password: process.env.DB_PASSWORD || '',
+        ssl: isProduction ? { rejectUnauthorized: false } : false,
+        max: 20,
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 5000,
+      }
+);
 
 // Log pool errors (don't crash the app)
 pool.on('error', (err) => {
@@ -69,7 +79,11 @@ const testConnection = async () => {
     logger.info('✓ Database connection established');
     return true;
   } catch (error) {
-    logger.error('✗ Database connection failed:', error.message);
+    logger.error('✗ Database connection failed:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+    });
     return false;
   }
 };
