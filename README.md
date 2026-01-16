@@ -77,6 +77,42 @@ npm start
 
 The server will start at `http://localhost:3000`
 
+## 🚀 Deployment (Render)
+
+### 1. Create PostgreSQL on Render
+- Render Dashboard → New + → PostgreSQL
+- Copy these values:
+  - DB_HOST
+  - DB_PORT
+  - DB_NAME
+  - DB_USER
+  - DB_PASSWORD
+
+### 2. Create Web Service
+- Render Dashboard → New + → Web Service
+- Connect GitHub repo
+
+### 3. Set Environment Variables (Render → Service → Environment)
+DB_HOST=...
+DB_PORT=5432
+DB_NAME=...
+DB_USER=...
+DB_PASSWORD=...
+
+REDIS_HOST=...
+REDIS_PORT=6379
+
+ACCESS_TOKEN_SECRET=your_strong_secret
+REFRESH_TOKEN_SECRET=your_strong_secret
+NODE_ENV=production
+
+### 4. Build & Start Commands
+Build Command:
+npm install && npm run db:init
+
+Start Command:
+npm start
+
 ## 📡 API Endpoints
 
 ### Authentication
