@@ -59,6 +59,7 @@ CREATE DATABASE authx;
 ```
 
 ### 4. Initialize Schema
+> In production (Render/Railway), run `npm run db:init` once after connecting the database.
 
 ```bash
 npm run db:init
