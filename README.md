@@ -145,12 +145,14 @@ npm start
 ### Register a New User
 
 ```bash
-curl -X POST http://localhost:3000/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "password": "SecurePass123!"
-  }'
+$response = Invoke-RestMethod `
+  -Uri "http://localhost:3000/auth/register" `
+  -Method POST `
+  -Headers @{ "Content-Type" = "application/json" } `
+  -Body '{"email":"user2@example.com","password":"SecurePass123!"}'
+
+# View full tokens
+$response.data | ConvertTo-Json -Depth 3
 ```
 
 **Response:**
