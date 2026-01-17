@@ -220,12 +220,14 @@ Invoke-RestMethod `
 
 ```bash
 # Logout from current device
-curl -X POST http://localhost:3000/auth/logout \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "refreshToken": "YOUR_REFRESH_TOKEN"
-  }'
+Invoke-RestMethod `
+  -Uri "http://localhost:3000/auth/logout" `
+  -Method POST `
+  -Headers @{ 
+    "Authorization" = "Bearer $accessToken"
+    "Content-Type" = "application/json" 
+  } `
+  -Body "{`"refreshToken`":`"$refreshToken`"}"
 
 # Logout from all devices
 curl -X POST http://localhost:3000/auth/logout \
