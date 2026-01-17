@@ -177,29 +177,43 @@ $response.data | ConvertTo-Json -Depth 3
 ### Login
 
 ```bash
-curl -X POST http://localhost:3000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "password": "SecurePass123!"
-  }'
+$login = Invoke-RestMethod `
+  -Uri "http://localhost:3000/auth/login" `
+  -Method POST `
+  -Headers @{ "Content-Type" = "application/json" } `
+  -Body '{"email":"user@example.com","password":"SecurePass123!"}'
+
+# Save tokens for next commands
+$accessToken = $login.data.accessToken
+$refreshToken = $login.data.refreshToken
+
+# View tokens
+$login.data | ConvertTo-Json -Depth 3
 ```
 
 ### Refresh Tokens
 
 ```bash
-curl -X POST http://localhost:3000/auth/refresh \
-  -H "Content-Type: application/json" \
-  -d '{
-    "refreshToken": "YOUR_REFRESH_TOKEN"
-  }'
+$refresh = Invoke-RestMethod `
+  -Uri "http://localhost:3000/auth/refresh" `
+  -Method POST `
+  -Headers @{ "Content-Type" = "application/json" } `
+  -Body "{`"refreshToken`":`"$refreshToken`"}"
+
+# Update tokens
+$accessToken = $refresh.data.accessToken
+$refreshToken = $refresh.data.refreshToken
+
+$refresh.data | ConvertTo-Json -Depth 3
 ```
 
 ### Access Protected Route
 
 ```bash
-curl -X GET http://localhost:3000/protected/profile \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+Invoke-RestMethod `
+  -Uri "http://localhost:3000/protected/profile" `
+  -Method GET `
+  -Headers @{ "Authorization" = "Bearer $accessToken" }
 ```
 
 ### Logout
